@@ -125,7 +125,7 @@ inline scalar_t eval(treecode *tree, scalar_t x0, scalar_t y0, quadtree* branch_
  */
 inline void traversal(treecode *tree, scalar_t& theta,
                       shared_ptr<point> point_ptr, quadtree* branch_ptr,
-                      int& n, scalar_t* matrix_ptr) noexcept {
+                      ord_t& n, scalar_t* matrix_ptr) noexcept {
 
     auto d = distance(point_ptr->x, point_ptr->y, branch_ptr->x, branch_ptr->y);
 
