@@ -1,5 +1,7 @@
 #include <iostream>
 #include "treecode.h"
+#include <chrono>
+#include "omp.h"
 
 using namespace std;
 
@@ -13,12 +15,21 @@ int main() {
     int n = qt->size * qt->size;
 
     auto matrix = new scalar_t[n * n];
+    auto i = 0;
+    auto t0 = chrono::system_clock::now();
 
-    for (auto i = 0; i < n; i++) {
+    omp_set_num_threads(256);
+#pragma omp parallel for private(i) shared(qt, theta, n, matrix)
+    for (i = 0; i < n; i++) {
 
         traversal(qt, theta, qt->root->points[i], qt->root, n, matrix);
 
     }
+    auto t1 = chrono::system_clock::now();
+
+    std::cout << "matrix setting uses " <<
+            chrono::duration_cast<chrono::milliseconds>(t1 - t0).count() << " milliseconds"
+    << std::endl;
 
     delete[] matrix;
     delete qt;
