@@ -14,9 +14,10 @@ int main() {
     qt->root->populate();
 
     scalar_t theta = 0.5;
-    int n = qt->size * qt->size;
 
+    size_t n = qt->size * qt->size;
     auto matrix = new scalar_t[n * n];
+
     auto i = 0;
     auto t0 = chrono::system_clock::now();
 

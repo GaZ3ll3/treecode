@@ -24,7 +24,7 @@ using namespace tbb;
 
 typedef float scalar_t;
 typedef float attribute_t;
-typedef int ord_t;
+typedef size_t ord_t;
 
 
 /*
