@@ -4,11 +4,27 @@
 
 #ifndef QUADTREE_TREECODE_H
 #define QUADTREE_TREECODE_H
+#define EPS 1e-2
 
 #include "quadtree.h"
 
-typedef int level_t;
+static std::vector<double> X {
+        -0.90617984593866396370032134655048,
+        -0.53846931010568310771446931539685,
+        0,
+        0.53846931010568310771446931539685,
+        0.90617984593866396370032134655048
 
+};
+static std::vector<double> W {
+        0.23692688505618908489935847683228,
+        0.47862867049936647090291330641776,
+        0.56888888888888888888888888888889,
+        0.47862867049936647090291330641776,
+        0.23692688505618908489935847683228
+};
+
+typedef int level_t;
 /*
  * treecode structure
  * @members
@@ -67,6 +83,11 @@ typedef struct treecode {
 
 } treecode;
 
+
+/*
+ * external functions
+ */
+
 /*
  *  return distance between two locations
  *  @params
@@ -78,6 +99,10 @@ typedef struct treecode {
  */
 inline scalar_t distance(scalar_t x0, scalar_t y0, scalar_t x1, scalar_t y1) noexcept {
     return sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1));
+}
+
+inline scalar_t integral_helper(treecode *tree, scalar_t x0, scalar_t y0, scalar_t x1, scalar_t y1) noexcept {
+    return distance(x0, y0, x1, y1) * tree->getAttribute((x0 + x1)/2. , (y0 + y1)/2.);
 }
 
 /*
@@ -94,9 +119,20 @@ inline scalar_t distance(scalar_t x0, scalar_t y0, scalar_t x1, scalar_t y1) noe
  * @y1 : y coordinate
  */
 inline scalar_t integral(treecode *tree, scalar_t x0, scalar_t y0, scalar_t x1, scalar_t y1) noexcept {
-    return distance(x0, y0, x1, y1) * tree->root->attribute;
+
+    if (distance(x0, y0, x1, y1) < EPS) return integral_helper(tree, x0, y0, x1, y1);
+    else {
+        auto xm = (x0 + x1)/2.;
+        auto ym = (y0 + y1)/2.;
+        return integral(tree, x0, y0, xm, ym) +
+               integral(tree, xm, ym, x1, y1);
+    }
 }
 
+
+inline scalar_t eval_helper(treecode *tree, scalar_t x0, scalar_t y0, scalar_t x1, scalar_t y1) noexcept {
+    return exp(-integral(tree, x0, y0, x1, y1)) / distance(x0, y0, x1, y1);
+}
 /*
  * return evaluation of kernel over a grid
  *
@@ -105,9 +141,19 @@ inline scalar_t integral(treecode *tree, scalar_t x0, scalar_t y0, scalar_t x1, 
  * @params
  */
 inline scalar_t eval(treecode *tree, scalar_t x0, scalar_t y0, quadtree* branch_ptr) noexcept {
-    return exp(-integral(tree, x0, y0, branch_ptr->x, branch_ptr->y ))
-           * branch_ptr->length * branch_ptr->length
-           /distance(x0, y0, branch_ptr->x, branch_ptr->y);
+    auto sum = 0.;
+    auto bx = branch_ptr->x + 0.5 * branch_ptr->length;
+    auto by = branch_ptr->y + 0.5 * branch_ptr->length;
+    for (auto i = 0; i < X.size(); i++) {
+        bx +=  X[i] * branch_ptr->length/2.0;
+        for (auto j = 0; j < X.size(); j++) {
+            sum += eval_helper(tree, x0, y0,
+                               bx,
+                               by + X[j] * branch_ptr->length/2.0) * W[i] * W[j] / 4.0;
+        }
+        bx -= X[i] * branch_ptr->length/2.0;
+    }
+
 }
 /*
  * traversal quadtree
@@ -138,7 +184,8 @@ inline void traversal(treecode *tree, scalar_t& theta,
             }
             else {
                 matrix_ptr[n * point->id + point_ptr->id] =
-                        2 * M_PI * (1 - exp(-branch_ptr->attribute * branch_ptr->length))/branch_ptr->attribute;
+                        2 * scalar_t(M_PI) *
+                        (1 - exp(-branch_ptr->attribute * branch_ptr->length))/branch_ptr->attribute;
             }
         }
     }
@@ -151,5 +198,6 @@ inline void traversal(treecode *tree, scalar_t& theta,
         }
     }
 }
+
 
 #endif //QUADTREE_TREECODE_H
