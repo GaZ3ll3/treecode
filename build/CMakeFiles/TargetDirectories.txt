@@ -1,1 +1,0 @@
-/home/lurker/workspace/ClionProjects/quadtree/build/CMakeFiles/quadtree.dir

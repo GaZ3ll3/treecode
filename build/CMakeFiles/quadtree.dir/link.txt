@@ -1,1 +1,0 @@
-/usr/bin/c++   -O3 -DNDEBUG -std=c++11 -fopenmp   CMakeFiles/quadtree.dir/main.cpp.o CMakeFiles/quadtree.dir/quadtree.cpp.o CMakeFiles/quadtree.dir/treecode.cpp.o  -o quadtree -rdynamic -ltbb 
