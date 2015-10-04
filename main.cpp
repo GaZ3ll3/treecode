@@ -9,7 +9,7 @@ int main() {
 
     // using int32_t as ordering, maximum (2^7)^4 elements in matrix.
     // otherwise causes overflow.
-    auto qt = new treecode(0, 0, 1., 6);
+    auto qt = new treecode(0, 0, 1., 7);
     for (auto it : qt->root->points) {it->attribute = 1.0;}
     qt->root->populate();
 
@@ -21,7 +21,11 @@ int main() {
     auto i = 0;
     auto t0 = chrono::system_clock::now();
 
-    omp_set_num_threads(16);
+    omp_set_num_threads(2048);
+    /*
+     * spawning is slow. more threads can make it faster
+     * about 25% faster.
+     */
 #pragma omp parallel for private(i) shared(qt, theta, n, matrix)
     for (i = 0; i < n; i++) {
         traversal(qt, theta, qt->root->points[i], qt->root, n, matrix);
