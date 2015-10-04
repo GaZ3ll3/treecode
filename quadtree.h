@@ -17,10 +17,10 @@
 #include <memory>
 #include <cassert>
 
-#include "tbb/tbb.h"
+//#include "tbb/tbb.h"
 
 using namespace std;
-using namespace tbb;
+//using namespace tbb;
 
 typedef float scalar_t;
 typedef float attribute_t;
