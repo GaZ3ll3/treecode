@@ -153,6 +153,7 @@ inline scalar_t eval(treecode *tree, scalar_t x0, scalar_t y0, quadtree* branch_
         }
         bx -= X[i] * branch_ptr->length/2.0;
     }
+    return sum * branch_ptr->length * branch_ptr->length;
 
 }
 /*
