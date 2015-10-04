@@ -8,6 +8,10 @@
 
 #include "quadtree.h"
 
+
+/*
+ * static arrays for integration
+ */
 static std::vector<scalar_t> X {
         -0.90617984593866396370032134655048,
         -0.53846931010568310771446931539685,
@@ -108,8 +112,6 @@ inline scalar_t integral_helper(treecode *tree, scalar_t x0, scalar_t y0, scalar
 /*
  * return line integral between two locations
  *
- * todo: provide accurate line integral
- *
  * @params
  *
  * @tree : treecode structure
@@ -129,16 +131,20 @@ inline scalar_t integral(treecode *tree, scalar_t x0, scalar_t y0, scalar_t x1, 
     }
 }
 
-
+/*
+ * auxiliary function for evaluation
+ */
 inline scalar_t eval_helper(treecode *tree, scalar_t x0, scalar_t y0, scalar_t x1, scalar_t y1) noexcept {
     return exp(-integral(tree, x0, y0, x1, y1)) / distance(x0, y0, x1, y1);
 }
 /*
  * return evaluation of kernel over a grid
- *
- * todo: provide accurate evaluation function
- *
  * @params
+ *
+ * @tree : treecode pointer
+ * @x0 : x coordinate
+ * @y0 : y coordinate
+ * @branch_ptr : target quadtree
  */
 inline scalar_t eval(treecode *tree, scalar_t x0, scalar_t y0, quadtree* branch_ptr) noexcept {
     auto sum = scalar_t(0.0);
@@ -161,12 +167,12 @@ inline scalar_t eval(treecode *tree, scalar_t x0, scalar_t y0, quadtree* branch_
  *
  * @params
  *
- * @tree
- * @theta
- * @point_ptr
- * @branch_ptr
- * @n
- * @matrix_ptr
+ * @tree : treecode structure pointer
+ * @theta : parameter to control accuracy
+ * @point_ptr : point pointer
+ * @branch_ptr: target quadtree
+ * @n : matrix size
+ * @matrix_ptr : matrix pointer
  */
 inline void traversal(treecode *tree, scalar_t& theta,
                       shared_ptr<point> point_ptr, quadtree* branch_ptr,
