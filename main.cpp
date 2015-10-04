@@ -9,7 +9,7 @@ int main() {
 
     // using int32_t as ordering, maximum (2^7)^4 elements in matrix.
     // otherwise causes overflow.
-    auto qt = new treecode(0, 0, 1., 7);
+    auto qt = new treecode(0, 0, 1., 6);
     for (auto it : qt->root->points) {it->attribute = 1.0;}
     qt->root->populate();
 
@@ -35,6 +35,7 @@ int main() {
     std::cout << "matrix setting uses " <<
             chrono::duration_cast<chrono::milliseconds>(t1 - t0).count() << " milliseconds"
     << std::endl;
+
 
     delete[] matrix;
     delete qt;

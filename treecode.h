@@ -8,7 +8,7 @@
 
 #include "quadtree.h"
 
-static std::vector<double> X {
+static std::vector<scalar_t> X {
         -0.90617984593866396370032134655048,
         -0.53846931010568310771446931539685,
         0,
@@ -16,7 +16,7 @@ static std::vector<double> X {
         0.90617984593866396370032134655048
 
 };
-static std::vector<double> W {
+static std::vector<scalar_t> W {
         0.23692688505618908489935847683228,
         0.47862867049936647090291330641776,
         0.56888888888888888888888888888889,
@@ -102,7 +102,7 @@ inline scalar_t distance(scalar_t x0, scalar_t y0, scalar_t x1, scalar_t y1) noe
 }
 
 inline scalar_t integral_helper(treecode *tree, scalar_t x0, scalar_t y0, scalar_t x1, scalar_t y1) noexcept {
-    return distance(x0, y0, x1, y1) * tree->getAttribute((x0 + x1)/2. , (y0 + y1)/2.);
+    return distance(x0, y0, x1, y1) * tree->getAttribute((x0 + x1)/2 , (y0 + y1)/2);
 }
 
 /*
@@ -122,8 +122,8 @@ inline scalar_t integral(treecode *tree, scalar_t x0, scalar_t y0, scalar_t x1, 
 
     if (distance(x0, y0, x1, y1) < EPS) return integral_helper(tree, x0, y0, x1, y1);
     else {
-        auto xm = (x0 + x1)/2.;
-        auto ym = (y0 + y1)/2.;
+        auto xm = (x0 + x1)/2;
+        auto ym = (y0 + y1)/2;
         return integral(tree, x0, y0, xm, ym) +
                integral(tree, xm, ym, x1, y1);
     }
@@ -141,20 +141,18 @@ inline scalar_t eval_helper(treecode *tree, scalar_t x0, scalar_t y0, scalar_t x
  * @params
  */
 inline scalar_t eval(treecode *tree, scalar_t x0, scalar_t y0, quadtree* branch_ptr) noexcept {
-    auto sum = 0.;
-    auto bx = branch_ptr->x + 0.5 * branch_ptr->length;
-    auto by = branch_ptr->y + 0.5 * branch_ptr->length;
+    auto sum = scalar_t(0.0);
+    auto center_x = branch_ptr->x +  branch_ptr->length/2;
+    auto center_y = branch_ptr->y +  branch_ptr->length/2;
     for (auto i = 0; i < X.size(); i++) {
-        bx +=  X[i] * branch_ptr->length/2.0;
+        auto x_ = center_x +  X[i] * branch_ptr->length/2;
         for (auto j = 0; j < X.size(); j++) {
             sum += eval_helper(tree, x0, y0,
-                               bx,
-                               by + X[j] * branch_ptr->length/2.0) * W[i] * W[j] / 4.0;
+                               x_,
+                               center_y + X[j] * branch_ptr->length/2) * W[i] * W[j] / 4;
         }
-        bx -= X[i] * branch_ptr->length/2.0;
     }
     return sum * branch_ptr->length * branch_ptr->length;
-
 }
 /*
  * traversal quadtree
