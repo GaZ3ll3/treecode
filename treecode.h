@@ -163,8 +163,6 @@ inline scalar_t eval(treecode *tree, scalar_t x0, scalar_t y0, quadtree* branch_
 /*
  * traversal quadtree
  *
- * todo: pre-order traversal
- *
  * @params
  *
  * @tree : treecode structure pointer
