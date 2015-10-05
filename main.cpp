@@ -10,18 +10,18 @@ int main() {
     // using int32_t as ordering, maximum (2^7)^4 elements in matrix.
     // otherwise causes overflow.
     auto qt = new treecode(0, 0, 1., 6);
-    for (auto it : qt->root->points) {it->attribute = 1.0;}
+    for (auto it : qt->root->points) {it->attribute = 5.1;}
     qt->root->populate();
 
     scalar_t theta = 0.7;
 
-    size_t n = qt->size * qt->size;
+    level_t n = qt->size * qt->size;
     auto matrix = new scalar_t[n * n];
 
     auto i = 0;
     auto t0 = chrono::system_clock::now();
 
-    omp_set_num_threads(2048);
+    omp_set_num_threads(4);
     /*
      * spawning is slow. more threads can make it faster
      * about 25% faster.
@@ -35,7 +35,6 @@ int main() {
     std::cout << "matrix setting uses " <<
             chrono::duration_cast<chrono::milliseconds>(t1 - t0).count() << " milliseconds"
     << std::endl;
-
 
     delete[] matrix;
     delete qt;

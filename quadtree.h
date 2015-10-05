@@ -24,7 +24,7 @@ using namespace std;
 
 typedef float scalar_t;
 typedef float attribute_t;
-typedef size_t ord_t;
+typedef int32_t ord_t;
 
 
 /*
@@ -55,7 +55,7 @@ typedef struct point{
     point(scalar_t _x, scalar_t _y, attribute_t _attribute) :
             x(_x), y(_y), attribute(_attribute), id(0) {}
     point(scalar_t _x, scalar_t _y) :
-            x(_x), y(_y), attribute(0.), id(0) {}
+            x(_x), y(_y), attribute(0.0f), id(0) {}
     // non-copyable
     point(const point&) = delete;
     point& operator=(const point&) = delete;
@@ -98,7 +98,7 @@ typedef struct quadtree {
             length(_length),
             x(_x_start),
             y(_y_start),
-            attribute(0.),
+            attribute(0.0f),
             parent(nullptr),
             status(Status::UNSET){}
     // non-copyable
