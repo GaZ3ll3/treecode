@@ -22,8 +22,8 @@
 using namespace std;
 //using namespace tbb;
 
-typedef float scalar_t;
-typedef float attribute_t;
+typedef double scalar_t;
+typedef double attribute_t;
 typedef int32_t ord_t;
 
 

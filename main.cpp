@@ -21,7 +21,7 @@ int main() {
     auto i = 0;
     auto t0 = chrono::system_clock::now();
 
-    omp_set_num_threads(4);
+    omp_set_num_threads(2048);
     /*
      * spawning is slow. more threads can make it faster
      * about 25% faster.
